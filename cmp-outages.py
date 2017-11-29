@@ -82,6 +82,8 @@ if not Path('Maine_E911_NG_Roads/Maine_E911_NG_Roads.shp').exists():
         if not args.quiet:
             print('Unzipping shapefiles...')
         zipfile.ZipFile('Maine_E911_NG_Roads.zip','r').extractall('Maine_E911_NG_Roads')
+        if not args.quiet:
+            print('...done.')
     else:
         print('ERROR: no .ship file in Maine_E911_NG_Roads/Maine_E911_NG_Roads.shp and no zip to unpack')
         sys.exit()
@@ -101,6 +103,8 @@ else:
 if args.quiet:
     allRoadIterator = sf.iterShapeRecords()
 else:
+    print('Checking roads...')
+    # TODO: pull length from shapefile rather than hardcoding
     allRoadIterator = tqdm(sf.iterShapeRecords(), total=145148)
 
 try:
@@ -179,8 +183,8 @@ try:
     # TODO: make show() work
     # plt.show()
 
-    if args.verbose:
-        print('Done')
+    if not args.quiet:
+        print('Wrote map to', args.output)
 
 except KeyboardInterrupt:
     print('Interrupt recieved.  Exiting.')

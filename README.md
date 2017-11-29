@@ -20,7 +20,7 @@ For more details, see [the matplotlib page about this issue](http://matplotlib.o
 
 ## Running the script
 
-Without arguements, ``python3 cmp-outages.py`` will generate a map of the current outages, zoomed to just show them.
+Without arguments, ``python3 cmp-outages.py`` will generate a map of the current outages, zoomed to just show them.
 
 If there are no active outages, ``python3 cmp-outages.py --demo`` will paint 10% of the state red.
 

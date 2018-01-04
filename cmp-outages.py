@@ -5,11 +5,13 @@ import sys
 from time import sleep
 from urllib import request
 import zipfile
+import datetime
 
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import shapefile
 from tqdm import tqdm
+
 
 
 # Parse arguments
@@ -172,7 +174,7 @@ try:
     # TODO: This is to keep the title from causing an exception.  Hack.
     # TODO: trim sys.argv to a length that won't cause issues
     if args.width > 5:
-        plt.title(str.join(' ', sys.argv))
+        plt.title(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S  ') + str.join(' ', sys.argv))
 
     plt.gca().axes.get_xaxis().set_ticks([])
     plt.gca().axes.get_yaxis().set_ticks([])

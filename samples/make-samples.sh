@@ -10,6 +10,8 @@ python ./cmp-outages.py -o samples/sample-defaults.png                          
 echo "verbose..."
 python ./cmp-outages.py -o samples/sample-verbose.png --verbose                                  >& samples/sample-verbose.txt &
 
+wait
+
 echo "demo..."
 python ./cmp-outages.py -o samples/sample-demo.png --demo                                        >& samples/sample-demo.txt &
 
@@ -23,6 +25,8 @@ python ./cmp-outages.py -o samples/sample-fast.png --entirestate --demo --fast  
 
 echo "width..."
 python ./cmp-outages.py -o samples/sample-width.png --entirestate --demo --fast --width 2        >& samples/sample-width.txt &
+
+wait
 
 echo "zoom..."
 python ./cmp-outages.py -o samples/sample-zoom.png --zoom "Presque Isle" --demo                  >& samples/sample-zoom.txt &

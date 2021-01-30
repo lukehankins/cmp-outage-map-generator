@@ -4,7 +4,15 @@ A script to create a map with outage information from the Central Maine Power we
 
 ![Demo Mode output](samples/sample-demo.png)
 
-### Prerequisites
+## Prerequisites
+
+### OS packages
+
+You'll need:
+* freetype
+* libpng
+
+### Python
 
 This script requires python3 and, due to a bug in [virtualenv](https://github.com/pypa/virtualenv/issues/54), you may need to make your virtual environment using [venv](https://docs.python.org/3/library/venv.html).
 
@@ -17,6 +25,7 @@ pip install -r requirements.txt
 ```
 
 For more details, see [the matplotlib page about this issue](http://matplotlib.org/faq/osx_framework.html#virtualenv).
+
 
 ## Running the script
 

@@ -3,7 +3,6 @@ from pathlib import Path
 import random
 import sys
 from time import sleep
-from urllib import request
 import zipfile
 import datetime
 from pprint import pprint
@@ -12,6 +11,7 @@ from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import shapefile
 from tqdm import tqdm
+import requests
 
 # Parse arguments
 parser = argparse.ArgumentParser()
@@ -63,11 +63,10 @@ parser.add_argument(
 args = parser.parse_args()
 
 # Set some variables
-base_url = "http://www3.cmpco.com/OutageReports/"
+base_url = "http://ecmp.cmpco.com/OutageReports/"
 top_url = base_url + "/CMP.html"
 affected = []
 [xmin, ymin, xmax, ymax] = [0, 1, 2, 3]
-
 
 # If we're in demo mode, don't bother downloading the page and pick roads at random later on
 if args.demo:
@@ -75,8 +74,9 @@ if args.demo:
         print("Demo mode enabled")
     top_table_rows = []
 else:
+    # response = requests.get(top_url)
     top_table_rows = BeautifulSoup(
-        request.urlopen(top_url), "html.parser"
+        requests.get(top_url).text, "html.parser"
     ).findChildren("tr")
 
 # Parse the top page and children, recursively
@@ -89,28 +89,29 @@ for top_table_row in top_table_rows:
     if not county_a:
         continue
     county_name = county_a.text
+    if args.verbose:
+        print(f"Checking county {county_name}")
     sleep(1)
     county_table_rows = BeautifulSoup(
-        request.urlopen(base_url + county_a["href"]), "html.parser"
+        requests.get(base_url + county_a["href"]).text, "html.parser"
     ).findChildren("tr")
+
     for county_table_row in county_table_rows:
         town_a = county_table_row.find("a")
         if not town_a or town_a["href"] == "CMP.html":
             continue
         town_name = town_a.text
         sleep(1)
+        if args.verbose:
+            print(f"Checking county {county_name}, town {town_name}")
         town_table_rows = BeautifulSoup(
-            request.urlopen(base_url + town_a["href"]), "html.parser"
+            requests.get(base_url + town_a["href"]).text, "html.parser"
         ).findChildren("tr")
-        for town_table_row in town_table_rows[3:-1]:
+        for town_table_row in town_table_rows[1:-1]:
             road_name = town_table_row.find("td").text
             affected.append([county_name, town_name, road_name])
             if args.verbose:
-                print(
-                    "Outage found on {}, {}, {}".format(
-                        county_name, town_name, road_name
-                    )
-                )
+                print(f"Outage found on {county_name} - {town_name} - {road_name}")
 
 # Create some lookup tables
 affected_counties = list(set([x[0] for x in affected]))

@@ -1,0 +1,27 @@
+
+name: Update demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: apt-get
+        run: |
+          apt-get update
+          apt-get install -y python3 python3-pip libpng-dev cmake libfreetype6-dev libfontconfig1-dev xclip python3-tk
+      
+      - name: pip1
+        run: pip install -r requirements.txt
+      
+      - name: doit
+        run: python ./cmp-outages.py -o 

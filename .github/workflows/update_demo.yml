@@ -15,13 +15,34 @@ jobs:
           python-version: '3.10'
           cache: 'pip'
 
+      - name: Show environment
+        run: env | grep ^GITHUB
+        
+      - name: Show ref
+        run: echo "===============> Version from $GITHUB_REF"
+        
       - name: apt-get
         run: |
-          apt-get update
-          apt-get install -y python3 python3-pip libpng-dev cmake libfreetype6-dev libfontconfig1-dev xclip python3-tk
-      
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip libpng-dev cmake libfreetype6-dev libfontconfig1-dev xclip python3-tk
+              
       - name: pip1
         run: pip install -r requirements.txt
       
       - name: doit
-        run: python ./cmp-outages.py -o 
+        run: python ./cmp-outages.py --output samples/sample-latest.png --verbose --zoom Kittery --zoom Augusta
+  
+      - name: ls samples
+        run: ls -ltr samples
+        
+      - name: Commit and push
+        run: |-
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"
+          git status
+          git add -f samples/sample-latest.png
+          git status
+          timestamp=$(date -u)
+          git commit -m "Latest data: ${timestamp}" || exit 0
+          git push
+

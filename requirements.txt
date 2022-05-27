@@ -1,5 +1,5 @@
-beautifulsoup4==4.6.0
-matplotlib==2.1.0
-pyshp==1.2.12
-tqdm==4.19.4
+beautifulsoup4>=4.11.1
+matplotlib>=3.5.2
+pyshp>=2.3.0
+tqdm>=4.64.0
 requests

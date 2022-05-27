@@ -4,5 +4,5 @@
 __pycache__
 Maine_E911_NG_Roads/Maine_E911_NG_Roads/Maine_E911_NG_Roads.*
 Maine_E911_NG_Roads/Maine_E911_NG_Roads.*
-*.png
+./*.png
 .vscode

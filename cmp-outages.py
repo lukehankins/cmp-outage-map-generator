@@ -60,6 +60,12 @@ parser.add_argument(
     help="Skip drawing smaller non-interesting roads",
     action="store_true",
 )
+parser.add_argument(
+    "-D",
+    "--debug",
+    help="Enable debugging",
+    action="store_true",
+)
 args = parser.parse_args()
 
 # Set some variables
@@ -67,6 +73,13 @@ base_url = "http://ecmp.cmpco.com/OutageReports/"
 top_url = base_url + "/CMP.html"
 affected = []
 [xmin, ymin, xmax, ymax] = [0, 1, 2, 3]
+
+# Debug mode
+if args.debug:
+    if args.verbose:
+        print("Debug mode enabled")
+    from guppy import hpy
+    gh=hpy()
 
 # If we're in demo mode, don't bother downloading the page and pick roads at random later on
 if args.demo:
@@ -245,3 +258,6 @@ try:
 except KeyboardInterrupt:
     print("Interrupt recieved.  Exiting.")
     sys.exit()
+
+if args.debug:
+    print(gh.heap())

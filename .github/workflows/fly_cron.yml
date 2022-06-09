@@ -11,5 +11,4 @@ jobs:
         - uses: actions/checkout@v2
         - uses: superfly/flyctl-actions/setup-flyctl@master
         - working-directory: ./fly/updater
-        - run: fly m list
-        # - run: flyctl deploy --remote-only
+        - run: flyctl m list

@@ -22,13 +22,13 @@ for STYLE in updater website; do
     docker build \
         -t "${NAME}:arm64" .
 
-    # echo "@${AMD64DIGEST}"
-    # docker build \
-    #     --platform linux/amd64 \
-    #     --build-arg DIGEST="@${AMD64DIGEST}" \
-    #     -t "registry.fly.io/${NAME}:amd64" .
+    echo "@${AMD64DIGEST}"
+    docker build \
+        --platform linux/amd64 \
+        --build-arg DIGEST="@${AMD64DIGEST}" \
+        -t "registry.fly.io/${NAME}:amd64" .
 
-    # docker push "registry.fly.io/${NAME}:amd64"
+    docker push "registry.fly.io/${NAME}:amd64"
 
     for file in $FILES; do
         rm "./${file}"

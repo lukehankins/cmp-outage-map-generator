@@ -12,4 +12,7 @@ jobs:
         - uses: superfly/flyctl-actions/setup-flyctl@master
         - name: fly, fly, fly
           working-directory: ./fly/updater
+          run: fly m run --verbose -a cmp-outage-map-generator-updater registry.fly.io/cmp-outage-map-generator-updater:amd64
+        - name: how you doin?
+          working-directory: ./fly/updater
           run: flyctl m list

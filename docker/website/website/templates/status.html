@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+    <title>Status Page</title>
+</head>
+ 
+<body>
+    <h2>Status Page!</h2>
+    <h4>environ</h4>
+        <ul>
+            {% for key, value in data.environ.items() %}
+            <li>{{key}} == {{value}}</li>
+            {% endfor %}
+        </ul>
+
+    <h4>listdir of static</h4>
+        <ul>
+            {% for entry in data.static %}
+            <li>{{entry.name}} -- {{entry.stat().st_ctime}} -- {{ entry.stat().st_ctime|strftime }} </li>
+            {% endfor %}
+        </ul>
+ <!-- this section can be replaced by a child document -->  
+
+<p>END STATUS.</p>
+
+<!-- <img src="out1.png">
+<img src="out2.png"> -->
+ 
+</body>
+ 
+</html>

@@ -1,0 +1,20 @@
+
+# TODO: memory check --fast == 300M, 1.6G otherwise
+# TODO metrics
+# TODO logs to grafana -- https://community.fly.io/t/fly-logs-to-papertrail-logdna/2476/2
+# TODO lightbox
+# TODO worker to update static
+# TODO SSL
+# TODO https://community.fly.io/t/getting-the-release-version-from-inside-an-fly-app/1076/4
+# TODO CORS
+
+
+fly auth docker
+docker push registry.fly.io/cmp-outage-map-generator-updater:amd64
+fly m run --verbose -a cmp-outage-map-generator-updater registry.fly.io/cmp-outage-map-generator-updater:amd64
+
+docker build -t cmp-outage-map-generator:arm64 .
+docker run -it -p 8080:8080  cmp-outage-map-generator:arm64
+
+docker build --platform linux/amd64 --build-arg DIGEST=@sha256:e735a28fffb9f39bf4d8d50c364707a8e5274fe46e9b5a2974037098a0e0bdba -t cmp-outage-map-generator:amd64 .
+fly deploy --local-only --image cmp-outage-map-generator:amd64

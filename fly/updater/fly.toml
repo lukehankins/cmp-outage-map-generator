@@ -1,0 +1,11 @@
+# fly.toml file generated for cmp-outage-map-generator-updater on 2022-06-02T21:55:27-04:00
+
+app = "cmp-outage-map-generator-updater"
+
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true

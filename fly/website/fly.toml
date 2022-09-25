@@ -8,6 +8,7 @@ processes = []
 
 [env]
   PORT = "8080"
+  RUN_CRON = "true"
 
 [experimental]
   allowed_public_ports = []

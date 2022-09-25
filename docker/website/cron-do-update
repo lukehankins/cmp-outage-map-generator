@@ -1,0 +1,2 @@
+3 * * * * root /app/cron-do-update.sh
+#

@@ -70,7 +70,7 @@ args = parser.parse_args()
 
 # Set some variables
 base_url = "http://ecmp.cmpco.com/OutageReports/"
-top_url = base_url + "/CMP.html"
+top_url = base_url + "CMP.html"
 affected = []
 [xmin, ymin, xmax, ymax] = [0, 1, 2, 3]
 
@@ -88,9 +88,13 @@ if args.demo:
     top_table_rows = []
 else:
     # response = requests.get(top_url)
-    top_table_rows = BeautifulSoup(
-        requests.get(top_url).text, "html.parser"
-    ).findChildren("tr")
+    try:
+        top_table_rows = BeautifulSoup(
+            requests.get(top_url, timeout=10).text, "html.parser"
+        ).findChildren("tr")
+    except TimeoutError:
+        print(f"Timed out waiting for {top_url}")
+        sys.exit()
 
 # Parse the top page and children, recursively
 for top_table_row in top_table_rows:
@@ -106,7 +110,7 @@ for top_table_row in top_table_rows:
         print(f"Checking county {county_name}")
     sleep(1)
     county_table_rows = BeautifulSoup(
-        requests.get(base_url + county_a["href"]).text, "html.parser"
+        requests.get(base_url + county_a["href"], timeout=10).text, "html.parser"
     ).findChildren("tr")
 
     for county_table_row in county_table_rows:
@@ -118,7 +122,7 @@ for top_table_row in top_table_rows:
         if args.verbose:
             print(f"Checking county {county_name}, town {town_name}")
         town_table_rows = BeautifulSoup(
-            requests.get(base_url + town_a["href"]).text, "html.parser"
+            requests.get(base_url + town_a["href"], timeout=10).text, "html.parser"
         ).findChildren("tr")
         for town_table_row in town_table_rows[1:-1]:
             road_name = town_table_row.find("td").text

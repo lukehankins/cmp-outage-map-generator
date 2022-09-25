@@ -19,6 +19,12 @@ parser.add_argument(
     action="store",
 )
 parser.add_argument(
+    "-m",
+    "--mimetype",
+    help='Mimetype',
+    action="store",
+)
+parser.add_argument(
     "-b",
     "--bucket",
     help='Bucket to use',
@@ -63,10 +69,14 @@ if not args.destination:
 if args.verbose:
     print(f"Uploading {args.file} to s3://{args.bucket}/{args.destination}")
 
+extra_args = {}
+if args.mimetype:
+    extra_args['ContentType'] = args.mimetype
+
 # if args.debug:
 #     print(f"{aws_access_key_id} - {aws_secret_access_key}")
 
-result = s3.Bucket('esp-cmpomg').upload_file(args.file,args.destination)
+result = s3.Bucket(args.bucket).upload_file(args.file,args.destination, ExtraArgs=extra_args)
 
 if args.verbose:
     print(result)

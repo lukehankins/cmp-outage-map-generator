@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import shapefile
 from tqdm import tqdm
 import requests
+import requests_cache
 
 # Parse arguments
 parser = argparse.ArgumentParser()
@@ -68,6 +69,10 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+# Let's be nice to the CMP website
+if not args.debug:
+    requests_cache.install_cache(expire_after=60*60*3)
+
 # Set some variables
 base_url = "http://ecmp.cmpco.com/OutageReports/"
 top_url = base_url + "CMP.html"
@@ -90,13 +95,15 @@ else:
     # response = requests.get(top_url)
     try:
         top_table_rows = BeautifulSoup(
-            requests.get(top_url, timeout=10).text, "html.parser"
+            requests.get(top_url, timeout=60).text, "html.parser"
         ).findChildren("tr")
     except TimeoutError:
         print(f"Timed out waiting for {top_url}")
         sys.exit()
 
 # Parse the top page and children, recursively
+if not top_table_rows:
+    print(f"ERROR: no rows found for {top_url}")
 for top_table_row in top_table_rows:
     if "No reported electricity outages are in our system." in top_table_row.text:
         if not args.quiet:
@@ -110,20 +117,25 @@ for top_table_row in top_table_rows:
         print(f"Checking county {county_name}")
     sleep(1)
     county_table_rows = BeautifulSoup(
-        requests.get(base_url + county_a["href"], timeout=10).text, "html.parser"
+        requests.get(base_url + county_a["href"], timeout=120).text, "html.parser"
     ).findChildren("tr")
+
+    if not county_table_rows:
+        print(f"ERROR: no rows found for {county_name}")
 
     for county_table_row in county_table_rows:
         town_a = county_table_row.find("a")
         if not town_a or town_a["href"] == "CMP.html":
             continue
         town_name = town_a.text
-        sleep(1)
         if args.verbose:
             print(f"Checking county {county_name}, town {town_name}")
-        town_table_rows = BeautifulSoup(
-            requests.get(base_url + town_a["href"], timeout=10).text, "html.parser"
-        ).findChildren("tr")
+        response = requests.get(base_url + town_a["href"], timeout=120)
+        if args.debug:
+            print(f"response from cache for {county_name}, town {town_name}: {response.from_cache}")
+        if not response.from_cache:
+            sleep(1)
+        town_table_rows = BeautifulSoup(response.text, "html.parser").findChildren("tr")
         for town_table_row in town_table_rows[1:-1]:
             road_name = town_table_row.find("td").text
             affected.append([county_name, town_name, road_name])

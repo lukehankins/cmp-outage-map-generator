@@ -3,3 +3,4 @@ matplotlib>=3.5.2
 pyshp>=2.3.0
 tqdm>=4.64.0
 requests>=2.27.1
+requests_cache>=1.1.1

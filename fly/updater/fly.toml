@@ -9,3 +9,7 @@ processes = []
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
+
+[mounts]
+source="cmpomg_data"
+destination="/app/data"

@@ -58,29 +58,30 @@ def index():
 def stats():
     data = dict()
     data['flyenv'] = {'FLY_APP_NAME':os.getenv('FLY_APP_NAME')}
-    # data['environ'] = {}
+    # get env variables
     data['environ'] = os.environ
-    data['static'] = os.scandir(path = './website/static')
     # get last run
     # get list of /static
-    # get env variables
+    data['static'] = os.scandir(path = './website/static')
     return render_template("status.html", data=data)
 
 @app.route("/filedump")
 def filedump():
-    # data = defaultdict(list)
 
     files = reversed(get_files_from_s3())
 
-    data = []
+    dates = []
+    filesbydate = defaultdict(list)
 
     for file in files:
         if "png" in file:
             prefix = file.split('.')[0]
-            date = '-'.join(file.split('-')[1:4])
-            data.append(date)
+            date = '-'.join(file.split('-')[2:5])
+            dates.append(date)
+            filesbydate[date].append(file)
+    
 
-    return render_template("filedump.html", files=data)
+    return render_template("filedump.html", dates=dates, filesbydate=filesbydate)
 
 @app.route("/log")
 def status():

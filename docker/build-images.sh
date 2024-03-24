@@ -2,6 +2,8 @@
 
 set -e
 
+TIMESTAMP=$(date +%Y%m%d%H%M)
+
 do_build () {
     for file in $FILES; do
         cp "../../${file}" .
@@ -10,15 +12,15 @@ do_build () {
     date > build_date.txt
 
     docker build \
-        -t "${NAME}:arm64" .
+        -t "${NAME}:arm64-${TIMESTAMP}" .
 
     echo "@${AMD64DIGEST}"
     docker build \
         --platform linux/amd64 \
         --build-arg DIGEST="@${AMD64DIGEST}" \
-        -t "registry.fly.io/${NAME}:amd64" .
+        -t "registry.fly.io/${NAME}:amd64-${TIMESTAMP}" .
 
-    docker push "registry.fly.io/${NAME}:amd64"
+    docker push "registry.fly.io/${NAME}:amd64-${TIMESTAMP}"
 
     for file in $FILES; do
         rm "./${file}"
@@ -35,7 +37,7 @@ AMD64DIGEST=$(docker manifest inspect  python:3.10-slim | jq -r '.manifests[] | 
 if [ "$1" != "website" ]; then
     cd updater
     NAME=cmp-outage-map-generator-updater
-    FILES="requirements.txt Maine_E911_NG_Roads.zip cmp-outages.py upload-to-s3.py"
+    FILES="requirements.txt Maine_E911_NG_Roads.zip cmp-outages.py upload-to-s3.py list-s3.py"
     do_build
     cd ..
 fi
@@ -47,6 +49,16 @@ if [ "$1" != "updater" ]; then
     do_build
     cd ..
 fi
+
+echo "========="
+echo " IMAGES:"
+echo "========="
+
+for NAME in cmp-outage-map-generator-updater cmp-outage-map-generator; do
+    docker image ls "${NAME}:arm64-${TIMESTAMP}"
+    docker image ls "registry.fly.io/${NAME}:amd64-${TIMESTAMP}"
+done
+
 
 # for STYLE in website; do
 #     cd ${STYLE}
@@ -85,16 +97,4 @@ fi
 # done
 
 echo "======="
-# echo docker rm updater
-# echo docker logs --follow updater
-echo docker run --rm --env-file ~/.aws/cmpomg.env --name updater cmp-outage-map-generator-updater:arm64
-echo fly m run --memory 2048  --verbose -a cmp-outage-map-generator-updater registry.fly.io/cmp-outage-map-generator-updater:amd64
-echo docker exec -it updater /bin/sh
-echo
-# echo fly m run --verbose -a cmp-outage-map-generator-updater registry.fly.io/cmp-outage-map-generator-updater:amd64
-echo docker kill website
-echo docker run -d --rm -p 8080:8080 --env RUN_SERVER=true --env-file ~/.aws/cmpomg.env --name website cmp-outage-map-generator:arm64
-echo docker exec -it website /bin/sh
-echo fly deploy --local-only --image cmp-outage-map-generator:amd64  -a cmp-outage-map-generator
-echo 
-echo aws s3 ls esp-cmpomg
+./hints.sh

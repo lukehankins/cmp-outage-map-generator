@@ -1,13 +1,15 @@
 <br>
 &nbsp;&nbsp;FILES:
 <br>
-<pre>   
-   {% for file in files %}
-      {{ file }}
+   {% for date in dates %}
+      {{ date }}<br>
+      {% for file in filesbydate[date] %}
+         &nbsp;
+         <a href="https://cmpomg-static.ethersmith.com/{{ file }}">
+            https://cmpomg-static.ethersmith.com/{{ file }}
+        </a>
+        <br>
+      {% endfor %}
    {% endfor %}
-</pre>
-{% for file in files %}
-<img src="https://cmpomg-static.ethersmith.com/{{ file }}">
-<br>
-{% endfor %}
+
 

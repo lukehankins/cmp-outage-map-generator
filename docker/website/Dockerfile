@@ -14,23 +14,12 @@ FROM base
 COPY --from=builder /install /usr/local
 RUN apt-get update && apt-get install -y cron curl
 
-# RUN apt-get update && apt-get install -y \
-#     python3-pip \
-#     python3-venv \
-#     python3-dev \
-#     python3-setuptools \
-#     python3-wheel
-
-# RUN apt-get update && apt-get install -y \
-#     python3-pip
-
-# RUN mkdir -p /app
-
 COPY . /app
-COPY ./cron-do-update /etc/cron.d/cron-do-update
-RUN crontab /etc/cron.d/cron-do-update
 
-RUN curl -L https://fly.io/install.sh | sh
+# COPY ./cron-do-update /etc/cron.d/cron-do-update
+# RUN crontab /etc/cron.d/cron-do-update
+
+# RUN curl -L https://fly.io/install.sh | sh
 
 WORKDIR /app
 
